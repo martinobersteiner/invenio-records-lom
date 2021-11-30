@@ -70,6 +70,9 @@ jobs:
           pip freeze
           docker --version
           docker-compose --version
+      - name: Load elasticsearch-configuration
+        run: |
+          invenio index init
       - name: Log pip after install
         run: |
           pip --version
