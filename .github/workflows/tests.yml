@@ -72,7 +72,8 @@ jobs:
           docker-compose --version
       - name: Load elasticsearch-configuration
         run: |
-          curl http://172.17.0.1:9200
+          invenio shell
+          quit()
           invenio index init
       - name: Log pip after install
         run: |
