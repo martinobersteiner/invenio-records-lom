@@ -74,8 +74,10 @@ jobs:
         run: |
           invenio shell
           from invenio_search import current_search
+          print('asdf')
           quit()
           y
+          echo 'fdsa'
           invenio index init
       - name: Log pip after install
         run: |
