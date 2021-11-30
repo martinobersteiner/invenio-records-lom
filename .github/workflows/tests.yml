@@ -73,7 +73,9 @@ jobs:
       - name: Load elasticsearch-configuration
         run: |
           invenio shell
+          from invenio_search import current_search
           quit()
+          y
           invenio index init
       - name: Log pip after install
         run: |
