@@ -26,14 +26,19 @@ const ContribSearchAppFacetsWithConfig = parametrize(ContribSearchAppFacets, {
 });
 
 // per default, this also initializes the search-app (2nd argument, named `autoInit`)
-createSearchAppInit({
-  "BucketAggregation.element": LOMBucketAggregationElement,
-  "BucketAggregationValues.element": ContribBucketAggregationValuesElement,
-  "ResultsGrid.item": LOMRecordResultsGridItem,
-  "ResultsList.item": LOMRecordResultsListItem,
-  "SearchApp.facets": ContribSearchAppFacetsWithConfig,
-  "SearchApp.searchbarContainer": RDMRecordSearchBarContainer,
-  "SearchBar.element": RDMRecordMultipleSearchBarElement,
-  "SearchFilters.ToggleComponent": RDMToggleComponent,
-  "Count.element": RDMCountComponent,
-});
+createSearchAppInit(
+  {
+    // `id of <Overridable />`: `component to overwrite with`
+    "BucketAggregation.element": LOMBucketAggregationElement,
+    "BucketAggregationValues.element": ContribBucketAggregationValuesElement,
+    "ResultsGrid.item": LOMRecordResultsGridItem,
+    "ResultsList.item": LOMRecordResultsListItem,
+    "SearchApp.facets": ContribSearchAppFacetsWithConfig,
+    "SearchApp.searchbarContainer": RDMRecordSearchBarContainer,
+    "SearchBar.element": RDMRecordMultipleSearchBarElement,
+    "SearchFilters.ToggleComponent": RDMToggleComponent,
+    "Count.element": RDMCountComponent,
+  },
+  true, // auto-init
+  "invenio-lom-search-config" // init React to all HTML-elements with "data-invenio-lom-search-config" attribute
+);

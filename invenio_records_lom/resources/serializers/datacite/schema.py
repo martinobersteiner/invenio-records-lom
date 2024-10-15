@@ -22,6 +22,9 @@ from ..utils import get_lang, get_text
 class LOMToDataCite44Schema(Schema):
     """Schema for conversion from LOM to DataCite-REST JSON 4.4."""
 
+    # TODO: sanitize HTML inputs?
+    # TODO: get `publisher` via localproxy to config?
+
     identifiers = fields.Method("get_identifiers")
     creators = fields.Method("get_creators")
     titles = fields.Method("get_titles")
@@ -42,6 +45,11 @@ class LOMToDataCite44Schema(Schema):
     formats = fields.Method("get_formats")
     version = fields.Method("get_version")
     rightsList = fields.Method("get_rights_list")  # noqa: N815
+
+    # TODO: these are probably un-needed
+    descriptions = ...
+    geoLocations = ...
+    fundingReferences = ...
 
     schemaVersion = fields.Constant("http://datacite.org/schema/kernel-4")  # noqa: N815
 

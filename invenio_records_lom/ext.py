@@ -46,6 +46,7 @@ class InvenioRecordsLOM:
         self.init_config(app)
         self.init_services(app)
         self.init_resources(app)
+        # TODO: add `app.before_request(verify_token)` as in invenio-rdm-records?
         app.extensions["invenio-records-lom"] = self
 
     def init_config(self, app: Flask) -> None:
@@ -77,12 +78,15 @@ class InvenioRecordsLOM:
             files_service=FileService(files_service_config),
             draft_files_service=FileService(draft_files_config),
             pids_service=PIDsService(record_service_config, PIDManager),
+            # TODO: add `secret_links_service` as in invenio-rdm-records?
         )
 
         self.iiif_service = IIIFService(
             records_service=self.records_service,
             config=None,
         )
+
+        # TODO: custom oaipmh-service here, instead of hijacking invenio-rdm's
 
     def init_resources(self, app: Flask) -> None:  # noqa: ARG002
         """Initialize resouces."""

@@ -132,6 +132,8 @@ class LOMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
 
     # Schemas
     schema = LOMRecordSchema
+    # TODO: schema_parent = ...  # for reviews, communities, access-tested field dumps
+    # schema_secret_links = ...  # for secret links
 
     # Permission Policy
     permission_policy_cls = FromConfig(
@@ -139,6 +141,10 @@ class LOMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
         default=LOMRecordPermissionPolicy,
         import_string=True,
     )
+
+    # Result classes for secret links
+    # links_result_item_cls = ...
+    # links_result_list_cls = ...
 
     # Search
     search = FromConfigSearchOptions(

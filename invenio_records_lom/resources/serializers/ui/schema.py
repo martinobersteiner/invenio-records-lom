@@ -140,6 +140,25 @@ class Rights(fields.Field):
 class LOMUIBaseSchema(BaseObjectSchema):
     """Base schema for LOMUI-classes, containing all common fields."""
 
+    # publication_date_l10n_medium = FormatEDTF(...)
+    # publication_date_l10n_long = FormatEDTF(...)
+    # HERE: created_date_l10n_long = FormatDate(attribute="created", format="long")
+    # HERE: updated_date_l10n_long = FormatDate(attribute="updated", format="long")
+    # additional_titles = fields.List(...)
+    # custom_fields = fields.Nested(CustomFieldsSchemaUI(...))
+    # HERE: access_status = AccessStatusField(attribute="access")
+    # creators = ...
+    # CHILD: contributors = ...
+    # languages = fields.List(...)
+    # description_stripped = StrippedHTML(attribute="metadata.description")
+    # HERE: version = fields.Function(record_version)
+    # related_identifiers = fields.List(...)
+    # additional_descriptions = fields.List(...)
+    # dates = fields.List(fields.Nested(DatesSchema()), attribute="metadata.dates")
+    # rights = fields.List(fields.Nested(RightsSchema()), attribute="metadata.rights")
+    # is_draft = fields.Boolean(attribute="is_draft")
+    # funding = fields.List(...)
+
     created_date_l10n_long = FormatDate(attribute="created", format="long")
 
     updated_date_l10n_long = FormatDate(attribute="updated", format="long")

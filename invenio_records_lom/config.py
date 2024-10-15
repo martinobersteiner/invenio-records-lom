@@ -119,6 +119,7 @@ LOM_RESOURCE_TYPES = [
     "upload",
 ]
 
+# TODO: move default to env-vars
 LOM_PUBLISHER = "Graz University of Technology"
 
 #

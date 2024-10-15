@@ -18,6 +18,20 @@
 
 {%- block page_body %}
   <div class="ui container">
-    <div id="invenio-search-lom-config" data-invenio-search-config='{{ search_app_lom_config() | tojson }}'></div>
+    {#-
+      the javascript which initializes an invenio search-app is as follows:
+        invenio_search_ui.createSearchAppInit(
+          _,
+          _,
+          "invenio-lom-search-config",
+        )
+
+      the thusly created React-based search-app is rooted in HTML-elements with the attribute
+        "data-invenio-lom-search-config"
+      ("data-" prepended to string passed to `createSearchAppInit`)
+    #}
+    <div data-invenio-lom-search-config='{{ search_app_lom_config() | tojson }}'>
+      <!-- controlled by React-based invenio search app -->
+    </div>
   </div>
 {%- endblock page_body %}

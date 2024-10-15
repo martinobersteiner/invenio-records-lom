@@ -165,6 +165,7 @@ class LOMMetadata(BaseLOMMetadata):  # pylint: disable=too-many-public-methods
     #
     ###############
 
+    # TODO: as is, this makes course a subfield of metadata, shouldn't it sub record?
     def append_course(self, course: LOMCourseMetadata) -> None:
         """Append course."""
         # pylint: disable-next=unsupported-membership-test

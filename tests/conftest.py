@@ -43,7 +43,10 @@ def app_config(app_config: dict) -> dict:
     app_config["DATACITE_USERNAME"] = "INVALID"
     app_config["DATACITE_PASSWORD"] = "INVALID"  # noqa: S105
     app_config["DATACITE_PREFIX"] = "10.1234"
-    # ...but fake it
+    app_config["DATACITE_TEST_MODE"] = True
+
+    # ...but fake it:
+    ...  # TODO  # pylint: disable=unnecessary-ellipsis
 
     return app_config
 
@@ -86,6 +89,7 @@ def identity() -> None:
     return i
 
 
+# TODO: depend on `app`-fixture instead, as that cleans up `search`
 @pytest.fixture
 def service(base_app: Flask, location: Location) -> LOMRecordService:  # noqa: ARG001
     """Service fixture."""

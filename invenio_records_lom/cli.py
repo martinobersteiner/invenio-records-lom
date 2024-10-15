@@ -122,6 +122,8 @@ def demo(number: int, seed: int, *, backend: bool) -> None:
 @with_appcontext
 def reindex() -> None:
     """Reindex all published records from SQL-database in opensearch-indices."""
+    # TODO: also reindex drafts, built API-objects instead of pid-resolving them as invenio migration scripts do
+    # TODO: actually, invenio has its own reindexing stuff, use that instead!
     secho("Reindexing LOM records...", fg="green")
 
     record_ids = [
@@ -137,3 +139,95 @@ def reindex() -> None:
         indexer.index(record_api_object)
 
     secho("Successfully reindexed LOM records!", fg="green")
+
+
+# from invenio_search import current_search
+# from invenio_search.errors import IndexAlreadyExistsError
+
+
+# @lom.command("add-indices")
+# @with_appcontext
+# def add_indices():
+#     """
+#     Add LOM-indices to already initialized elasticsearch.
+
+#     To initialize all invenio-indices for a fresh opensearch, use `invenio index init` instead.
+#     """
+#     click.secho("Adding LOM-indices to elasticsearch...", fg="green")
+
+#     generator = current_search.create(
+#         index_list=[
+#             "lomrecords-records-record-v1.0.0",
+#             "lomrecords-drafts-draft-v1.0.0",
+#         ]
+#     )
+
+#     try:
+#         for name, response in generator:
+#             shards_acknowledged = response.get("shards_acknowledged", True)
+#             if not response["acknowledged"] or not shards_acknowledged:
+#                 click.secho(
+#                     "Opensearch didn't acknowledge the request, returning the following response:",
+#                     fg="red",
+#                 )
+#                 click.echo(response)
+#                 continue
+#             created_kind = "index" if "index" in response else "alias"
+#             click.echo(f"created {created_kind} {name}")
+#         click.secho("Added LOM-indices to elasticsearch.", fg="green")
+#     except IndexAlreadyExistsError as exc:
+#         click.secho(str(exc), fg="red")
+
+
+# @lom.command("ls")
+# @with_appcontext
+# def pid_ls():
+#     """Show entries from PersistentIdentifier-table."""
+#     # pylint: disable-next=import-outside-toplevel
+#     from invenio_pidstore.models import PersistentIdentifier
+
+#     query = PersistentIdentifier.query.filter_by(pid_type="lomid").order_by("updated")
+
+#     click.echo(str(query))
+
+#     results = query.all()
+
+#     def echo(message="", nl=False, **kwargs):
+#         sep = "" if nl else "  "
+#         message = str(message) + sep
+#         click.echo(message, nl=nl, **kwargs)
+
+#     for r in results:
+#         echo(r.created.isoformat(timespec="seconds"))
+#         echo(r.updated.isoformat(timespec="seconds"))
+#         echo(r.id)
+#         echo(r.pid_type)
+#         echo(r.pid_value)
+#         echo(r.status)
+#         echo(r.object_uuid, nl=True)
+
+
+# @lom.command()
+# def test():
+#     """T."""
+#     click.secho("bold", bold=True)
+#     click.secho("blink", blink=True)
+#     click.secho("reverse", fg="green", reverse=True)
+#     click.secho("underline", underline=True)
+#     click.secho("dim", dim=True)
+#     click.secho("all the colors", bg="cyan", fg="bright_red")
+#     import time  # pylint: disable=import-outside-toplevel
+
+#     def wait():
+#         time.sleep(0.2)
+
+#     with click.progressbar(
+#         range(100),
+#         label="progressing...",
+#         item_show_func=str,
+#         bar_template="%(label)s  %(bar)s | %(info)s",
+#     ) as lst:
+#         for __ in lst:
+#             wait()
+#     print("Printing might work too")
+#     click.pause()

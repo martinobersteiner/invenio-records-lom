@@ -25,6 +25,8 @@ from invenio_search.engine import dsl
 from marshmallow.exceptions import ValidationError
 
 
+# TODO: daw['a.0.c'] = 1 fails and wrongly creates 'a' as a `dict`
+# TODO: dont change data on error when setting; create new subtree, append as a last step
 class DotAccessWrapper(MutableMapping):
     """Provides getting/setting for passed-in mapping via dot-notated keys.
 

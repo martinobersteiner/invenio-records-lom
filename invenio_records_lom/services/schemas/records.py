@@ -8,6 +8,8 @@
 """Marshmallow schema for validating and serializing LOM JSONs."""
 
 
+import copy
+
 from flask import current_app
 from invenio_i18n import lazy_gettext as _
 from invenio_rdm_records.services.schemas import RDMRecordSchema
@@ -31,6 +33,7 @@ from .statistics import LomStatisticSchema
 def _validate_lom_scheme(scheme: str) -> None:
     """Validate whether scheme is supported."""
     if scheme not in current_app.config["LOM_PERSISTENT_IDENTIFIERS"]:
+        # BUG: an error triggerd by this looks like {'messages': ['P', 'e', 'r', ...]}
         raise ValidationError(_("Persistent identifier scheme unknown to LOM."))
 
 
@@ -40,6 +43,7 @@ class LOMRecordSchema(RDMRecordSchema):
     # NOTE: To ensure compatibility with invenio systemfields,
     # use ``NestedAttribute`` instead of ``fields.Nested()``.
 
+    # TODO: update comment under me
     # overwrite metadata-field: allow any dict
     metadata = NestedAttribute(MetadataSchema)
 
@@ -63,8 +67,12 @@ class LOMRecordSchema(RDMRecordSchema):
         does custom multiplexing. For this, `obj["metadata"]` needs the
         `resource_type` stored within itself.
         """
+        # mutating passed-in `obj` is bad
+        # however, `obj` can be `LOMRecord` which can't just be deep-copied...
+        obj = copy.copy(obj)
         if "metadata" not in obj:
             obj["metadata"] = {}
+        obj["metadata"] = copy.deepcopy(obj["metadata"])
         obj["metadata"]["type"] = obj.get("resource_type")
         return obj
 
@@ -75,6 +83,7 @@ class LOMRecordSchema(RDMRecordSchema):
 
         Cleanup to the above adding of `resource_type` to `obj["metadata"]`.
         """
+        # TODO: copy here too?
         if obj.get("metadata", {}).get("type"):
             del obj["metadata"]["type"]
         return obj

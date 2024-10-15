@@ -81,6 +81,9 @@ class LOMParent(ParentRecord):
     access = ParentRecordAccessField()
     review = RelatedRecord(Request, keys=["type", "receiver", "status"])
     communities = CommunitiesField(models.LOMParentCommunity)
+    # TODO: schema = ConstantField("$schema", "local://records/parent-v2.0.0.json")
+    # is this correct?
+    # TODO: permission_flags, is_verified
 
 
 class LOMFileDraft(FileRecord):

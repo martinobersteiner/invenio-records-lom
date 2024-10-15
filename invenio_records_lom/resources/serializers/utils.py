@@ -43,4 +43,5 @@ def get_related(obj: dict, relation_kind: str, catalog: str = "repo-pid") -> lis
 def get_newest_part(obj: dict):  # noqa: ANN201
     """Get newest dereferenced record that is "haspart"-related to `obj`."""
     parts = get_related(obj, relation_kind="haspart")
+    # TODO: use lifecycle.datetime?, what if parts == []?, add documentation of this function
     return parts[-1]

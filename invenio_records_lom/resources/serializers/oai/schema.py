@@ -362,7 +362,7 @@ class PurposeSchema(ExcludeUnknownOrderedSchema):
 class TaxonSchema(ExcludeUnknownOrderedSchema):
     """Schema for LOM-UIBK's `classification.taxonpath.taxon`."""
 
-    id = fields.Str(required=True)
+    id = fields.Str(required=True)  # TODO: check has correct prefix via validate.Regexp
     # TODO: optional field: entry
 
 

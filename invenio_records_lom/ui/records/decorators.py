@@ -18,6 +18,7 @@
 
 
 """Decorates for record-view-functions."""
+# TODO: reorder functions, annotate return-type, rename decoed~>decoed_view
 
 from collections.abc import Callable
 from functools import wraps
@@ -236,6 +237,9 @@ def require_lom_permission(action_name: str, *, default_endpoint: str) -> Callab
     def view_decorator[T](view_func: Callable[..., T]) -> Callable:
         @wraps(view_func)
         def decorated_view(*args: dict, **kwargs: dict) -> T:
+            # TODO: check_permission delegates to permission `Generator`s
+            # some permission-generators take additional arguments here...
+            # quick-fix: also pass **kwargs here
             service = current_records_lom.records_service
             if not service.check_permission(g.identity, action_name):
                 return redirect(url_for(default_endpoint))

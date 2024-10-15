@@ -9,9 +9,43 @@ import PropTypes from "prop-types";
 import React, { useState } from "react";
 import { Card, Icon, Item, Label, Popup } from "semantic-ui-react";
 
+// TODO: use actual translation instead of dummy
+import { i18next } from "@translations/invenio_records_lom/i18next";
+// const i18next = { t: (v) => v };
+
+/*
+import { Toggle, BucketAggregation } from "react-searchkit";
+import { ContribSearchHelpLinks } from "@js/invenio_search_ui/components/common/facets";
+
+export const LOMSearchAppFacets = ({ aggs, help, appName }) => {
+  return (
+    <aside aria-label={i18next.t("filters")} id="search-filters">
+      <Toggle
+        title={i18next.t("Versions")}
+        label={i18next.t("View all versions")}
+        filtervalue={["allversions", "true"]}
+      />
+      {aggs.map((agg) => {
+        return (
+          <BucketAggregation // overwritable, `LOMBucketAggregation` goes nice here
+            title={agg.title}
+            agg={agg}
+          />
+        );
+      })}
+      <Card className="borderless facet mt-0">
+        <Card.Content>
+          <Card.Header as="h2">{i18next.t("Help")}</Card.Header>
+          <ContribSearchHelpLinks appName={appName} />
+        </Card.Content>
+      </Card>
+    </aside>
+  );
+};*/
+
 export const LOMBucketAggregationElement = ({ title, containerCmp }) => {
   const [active, setActive] = useState(true);
-
+  //const hasSelections = !!containerCmp.props.selectedFilters.length;
   return (
     <Card className="borderless facet">
       <Card.Content>
@@ -86,19 +120,27 @@ export const LOMRecordResultsListItem = ({ result, index }) => {
   const ui = get(result, "ui", {});
   const access = get(ui, "access_status", {});
 
-  const createdDate = get(ui, "created_date_l10n_long", "No creation date found.");
+  const createdDate = get(
+    ui,
+    "created_date_l10n_long",
+    i18next.t("No creation date found.")
+  );
 
-  const publicationDate = get(ui, "created_date_l10n_long", "No update date found.");
+  const publicationDate = get(
+    ui,
+    "created_date_l10n_long",
+    i18next.t("No update date found.")
+  );
 
   const accessId = get(access, "id", "Public");
   const accessStatus = get(access, "title", "Public");
   const accessIcon = get(access, "icon", "unlock");
 
-  const description = get(ui, "generalDescriptions", "No description");
+  const description = get(ui, "generalDescriptions", i18next.t("No description"));
 
   const persons = get(ui, "contributors", []);
 
-  const title = get(ui, "title", "No title");
+  const title = get(ui, "title", i18next.t("No title"));
   const version = get(result, "metadata.lifecycle.version.langstring.#text", null);
 
   const uniqueViews = get(result, "stats.all_versions.unique_views", 0);
@@ -149,6 +191,7 @@ export const LOMRecordResultsListItem = ({ result, index }) => {
           <div className="flex justify-space-between align-items-end">
             {createdDate && (
               <small>
+                {/* TODO: figure out how to make translation depend on value of `createdDate` */}
                 Uploaded on <span>{createdDate}</span>
               </small>
             )}

@@ -35,6 +35,9 @@ def get_deposit_template_context(**extra_form_config_kwargs: dict) -> dict:
         num: {"name": f"{num} - {name}", "value": name}
         for num, name in oefos_dict.items()
     }
+    # TODO: get from db
+    #       - something like get_vocabulary('license',
+    #           name='{extras[short_name]} - {title['+locale+']}'.format)
     # TODO: dont hardcode vocabularies here...
     license_vocabulary = {
         "https://creativecommons.org/publicdomain/zero/1.0/": {
@@ -107,6 +110,8 @@ def get_deposit_template_context(**extra_form_config_kwargs: dict) -> dict:
         "video/x-msvideo": {"name": "video/x-msvideo - Audio Video Interleave (.avi)"},
     }
 
+    # TODO: use invenio's language-vocabulary instead...
+    #     remove /fixtures/data/vocabularies/languages.yaml when getting to it
     language_vocabulary = {"de": {"name": "Deutsch"}, "en": {"name": "English"}}
     resourcetype_vocabulary = {
         "https://w3id.org/kim/hcrt/application": {"name": "Software Application"},
@@ -219,6 +224,9 @@ def deposit_edit(
     """Edit an existing deposit."""
     files_dict = None if draft_files is None else draft_files.to_dict()
     record = draft.to_dict()
+    # TODO: invenio UIJSON-serializes record here...
+    # TODO: invenio passes more permissions...
+    # TODO: invenio has `pids`-, `links`-fields filled in (subfields of forms_config)
 
     template_context = get_deposit_template_context(
         createUrl=f"/api/oer/records/{pid_value}/draft",
@@ -246,6 +254,8 @@ def uploads(*, is_oer_certified: bool = False) -> str:
         template = "invenio_records_lom/uploads.html"
     else:
         template = "invenio_records_lom/not_licensed_text.html"
+
+    raise ValueError("uncaught error for testing purposes")
 
     return render_template(
         template,
