@@ -552,3 +552,9 @@ def export(vocabulary_id: str) -> None:
             fg="green",
             err=True,
         )
+
+
+# TODO: the following:
+#   - use vocabularies in:
+#     - deposit-page
+#     - facets

@@ -292,3 +292,47 @@ def delete_vocabulary(
         result_item.vocabulary_type_deleted = True
 
     return result_item
+
+
+from operator import itemgetter
+from time import perf_counter
+
+import jinja2
+
+
+def expand_vocabulary(vocabulary_id: str, /, **template_strings: str) -> dict[str, str]:
+    """Fill a dict with info from database according to jinja template-strings.
+
+    Example:
+        >>> ???("oefos", name="{{title.en}}", value="{{id}}")
+        {
+            101001: {"name": "Algebra", "value": 101001},
+            101002: {"name": "Analysis", "value": 101002},
+            101003: {"name": "Applied geometry", "value": 101003},
+            ...
+        }
+        # kwargs to ??? become keys to returned dict, templates determine values
+
+    """
+    # we got templating needs beyond what str.format can provide, so use jinja:
+    jinja_env = jinja2.Environment()
+    templates_by_name = {
+        name: jinja_env.from_string(template_string)
+        for name, template_string in template_strings.items()
+    }
+
+    result = {}
+    entries_item = vocabulary_service.read_all(
+        system_identity,
+        ["id", "props", "title"],
+        vocabulary_id,
+    )
+    entry_dicts = entries_item.to_dict()["hits"]["hits"]
+    entry_dicts.sort(key=itemgetter("id"))
+    for entry_dict in entry_dicts:
+        result[entry_dict["id"]] = {
+            name: template.render(entry_dict)
+            for name, template in templates_by_name.items()
+        }
+
+    return result

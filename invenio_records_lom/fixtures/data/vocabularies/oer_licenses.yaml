@@ -1,6 +1,6 @@
 - id: https://creativecommons.org/publicdomain/zero/1.0/
   props: {short_name: CC0 1.0}
-  title: {en: CC0 1.0 - Creative Commons CC0 1.0 Universal}
+  title: {en: Creative Commons CC0 1.0 Universal}
 - id: https://creativecommons.org/licenses/by/4.0/
   props: {short_name: CC BY 4.0}
   title: {en: Creative Commons Attribution 4.0 International}
