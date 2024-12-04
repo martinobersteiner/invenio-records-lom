@@ -31,6 +31,7 @@ class LOMRecordResource(RDMRecordResource):
             route("DELETE", prefix(routes["item-draft"]), self.delete_draft),
             route("GET", prefix(routes["list"]), self.search),
             route("GET", prefix(routes["item"]), self.read),
+            route("GET", prefix(routes["item-draft"]), self.read_draft),
             route("POST", prefix(routes["list"]), self.create),
             route("POST", prefix(routes["item-draft"]), self.edit),
             route("POST", prefix(routes["item-publish"]), self.publish),
