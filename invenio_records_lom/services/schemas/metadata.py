@@ -241,14 +241,23 @@ class RoleSchema(Schema):
     )
 
 
+class EntitySchema(Schema):
+    """Schema for LOM's entity-fields."""
+
+    full_name = SanitizedUnicode(
+        validate=validate.Length(min=1, error=_("Name cannot be empty.")),
+        required=True,
+    )
+    given_names = SanitizedUnicode()
+    family_name = SanitizedUnicode()
+
+
 class ContributeSchema(Schema):
     """Schema for LOM's contribute-fields."""
 
     role = fields.Nested(RoleSchema, required=True)
     entity = fields.List(
-        SanitizedUnicode(
-            validate=validate.Length(min=1, error=_("Name cannot be empty.")),
-        ),
+        fields.Nested(EntitySchema()),
         required=True,
         validate=validate.Length(
             min=1,

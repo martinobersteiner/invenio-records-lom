@@ -37,23 +37,28 @@ class LOMToCSLSchema(Schema):
 
     def get_authors(self, obj: dict) -> list[dict]:
         """Get list of author-objects."""
+
+        def get_csl_namedict(entity: dict) -> dict:
+            if entity.get("given_names") and entity.get("family_name"):
+                return {
+                    "given": entity["given_names"],
+                    "family": entity["family_name"],
+                }
+            return {
+                # 'literal' is an escape-hatch of sorts:
+                # when present, citation-string generation ignores all other fields
+                # and uses 'literal' without any changes to it...
+                "literal": entity.get("full_name", ""),
+            }
+
         contributes = obj.get("metadata", {}).get("lifecycle", {}).get("contribute", [])
-        author_fullnames = [
+        author_entities = [
             entity
             for contribute in contributes
             for entity in contribute["entity"]
             if contribute["role"]["value"]["langstring"]["#text"] == "Author"
         ]
-        return [
-            {
-                # TODO: use family-name and given-names here once implemented
-                # 'literal' is an escape-hatch of sorts:
-                # when present, citation-string generation ignores all other fields
-                # and uses 'literal' without any changes to it...
-                "literal": author_fullname,
-            }
-            for author_fullname in author_fullnames
-        ]
+        return [get_csl_namedict(author_entity) for author_entity in author_entities]
 
     def get_doi(self, obj: dict) -> str:
         """Get DOI."""
@@ -75,13 +80,13 @@ class LOMToCSLSchema(Schema):
     def get_publisher(self, obj: dict) -> str:
         """Get publisher."""
         contributes = obj.get("metadata", {}).get("lifecycle", {}).get("contribute", [])
-        publishers = [
+        publisher_entities = [
             entity
             for contribute in contributes
             for entity in contribute["entity"]
             if contribute["role"]["value"]["langstring"]["#text"] == "Publisher"
         ]
-        if not publishers:
+        if not publisher_entities:
             return missing
 
-        return publishers[0]
+        return publisher_entities[0].get("full_name", "")

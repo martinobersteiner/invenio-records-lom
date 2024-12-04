@@ -74,18 +74,21 @@ export class LOMDepositRecordSerializer extends DepositRecordSerializer {
     // it is of form [ {role: {value: String}, name: String}, ... ]
     //   in the above: role, name need not exist
     // it needs to be serialized to `metadata.lifecycle.contribute`
-    // serialized data is of form [{role: <LOM-vocabulary with value=role>, entity: [String]}]
+    // serialized data is of form
+    // [{role: <LOM-vocabulary with value=role>, entity: [entityDict]}]
     const metadata = recordToSerialize?.metadata || {};
     const formContributors = _get(metadata, "form.contributor", []);
     const metadataContributors = formContributors.map(
-      ({ role: maybeRoleDict, name: maybeName }) => ({
+      ({ role = {}, fullName = "", givenNames = "", familyName = "" }) => ({
         role: {
           source: { langstring: { "#text": "LOMv1.0", "lang": "x-none" } },
           value: {
-            langstring: { "#text": maybeRoleDict?.value || "", "lang": "x-none" },
+            langstring: { "#text": role?.value || "", "lang": "x-none" },
           },
         },
-        entity: [maybeName || ""],
+        entity: [
+          { full_name: fullName, given_names: givenNames, family_name: familyName },
+        ],
       })
     );
     _set(metadata, "lifecycle.contribute", metadataContributors);
@@ -206,8 +209,17 @@ export class LOMDepositRecordSerializer extends DepositRecordSerializer {
     for (const contribute of _get(metadata, "lifecycle.contribute", [])) {
       let role = _get(contribute, "role.value.langstring.#text", "");
       role = validRoles.includes(role) ? role : "";
-      for (const name of contribute.entity || []) {
-        form.contributor.push({ role: { value: role }, name });
+      for (const {
+        full_name: fullName = "",
+        given_names: givenNames = "",
+        family_name: familyName = "",
+      } of contribute.entity || []) {
+        form.contributor.push({
+          role: { value: role },
+          fullName: fullName,
+          givenNames: givenNames,
+          familyName: familyName,
+        });
       }
     }
 

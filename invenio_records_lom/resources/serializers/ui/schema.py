@@ -54,7 +54,7 @@ class Contributors(fields.Field):
         """Serialize."""
         return [
             {
-                "fullname": sub_obj["entity"],
+                "fullname": sub_obj["entity"].get("full_name", ""),
                 "role": get_text(sub_obj["role"]["value"]),
             }
             for sub_obj in value
@@ -184,7 +184,7 @@ class LOMUIBaseSchema(BaseObjectSchema):
             for entity in lom_contribute.get("entity", []):
                 ui_contributors.append(  # noqa: PERF401
                     {
-                        "fullname": entity,
+                        "fullname": entity.get("full_name", ""),
                         "role": get_text(lom_contribute["role"]["value"]),
                     },
                 )

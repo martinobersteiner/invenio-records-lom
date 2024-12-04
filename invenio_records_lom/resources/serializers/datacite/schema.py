@@ -77,7 +77,7 @@ class LOMToDataCite44Schema(Schema):
         entities = []
         for contribute in contributes:
             entities.extend(contribute.get("entity", []))
-        return [{"name": entity} for entity in entities]
+        return [{"name": entity.get("full_name")} for entity in entities]
 
     def get_titles(self, obj: LOMRecord) -> list:
         """Get list of title-dicts."""
@@ -124,7 +124,7 @@ class LOMToDataCite44Schema(Schema):
             for entity in contribute.get("entity", []):
                 contributor = {
                     "contributorType": "Other",
-                    "name": entity,
+                    "name": entity.get("full_name", ""),
                 }
                 contributors.append(contributor)
         return contributors or missing

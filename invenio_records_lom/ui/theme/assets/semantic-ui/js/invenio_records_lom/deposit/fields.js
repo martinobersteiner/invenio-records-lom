@@ -10,7 +10,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import { GroupField } from "react-invenio-forms";
 import { useSelector } from "react-redux";
-import { Button, Form, Icon, Label } from "semantic-ui-react";
+import { Button, Form, Grid, Icon, Label, Popup } from "semantic-ui-react";
 
 // TODO: consider changing invenio `GroupField`s for `Form.Group`
 // TODO: move id for author/publisher from contributor.1 to contributor.1.something
@@ -350,6 +350,115 @@ DropdownField.defaultProps = {
 };
 
 export const ContributorField = ({ closeAction, debug, fieldPath, vocabularyName }) => {
+  const typeFieldPath = `${fieldPath}.type`;
+  const [fieldProps, fieldMeta, fieldHelpers] = useField(`${typeFieldPath}.value`);
+  const { isSubmitting } = useFormikContext();
+  const typeError = fieldMeta.error || fieldMeta.initialError || null;
+  const options = [
+    { key: "Organization", value: "Organization", text: "Organization" },
+    { key: "Person", value: "Person", text: "Person" },
+  ];
+  // TODO: given/family name are remembered when changing to org
+  //   handle that (either in serializer or by deleting them on change)
+  let NameFields;
+  switch (fieldMeta.value) {
+    case "Organization":
+      NameFields = (
+        <LeftLabeledTextField
+          debug={debug}
+          fieldPath={`${fieldPath}.fullName`}
+          label={
+            <>
+              <Icon color="red" name="asterisk" />
+              <b>{i18next.t("Name")}</b>
+            </>
+          }
+          placeholder={i18next.t("Enter name of organization here")}
+        />
+      );
+      break;
+    case "Person":
+      NameFields = (
+        <Grid>
+          <Grid.Row stretched style={{ paddingBottom: 0 }}>
+            <Grid.Column stretched>
+              <LeftLabeledTextField
+                debug={debug}
+                fieldPath={`${fieldPath}.fullName`}
+                label={
+                  <>
+                    <Icon color="red" name="asterisk" />
+                    <b>{i18next.t("Full Name")}</b>
+                  </>
+                }
+                placeholder={i18next.t("Enter full name of person here")}
+              />
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row stretched style={{ paddingTop: 0 }}>
+            <Grid.Column stretched style={{ paddingRight: 0 }} width={8}>
+              <LeftLabeledTextField
+                debug={debug}
+                fieldPath={`${fieldPath}.givenNames`}
+                label={i18next.t("Given Names")}
+                placeholder={i18next.t("Optionally enter given names here")}
+              />
+            </Grid.Column>
+            <Grid.Column stretched style={{ paddingLeft: 0 }} width={8}>
+              <LeftLabeledTextField
+                debug={debug}
+                fieldPath={`${fieldPath}.familyName`}
+                label={i18next.t("Family Name")}
+                placeholder={i18next.t("Optionally enter family name here")}
+              />
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
+      );
+      break;
+    default:
+      NameFields = null;
+  }
+  return (
+    <Form.Field>
+      <GroupField fieldPath={fieldPath}>
+        <InnerDropdownField
+          className="three wide"
+          fieldPath={`${fieldPath}.role`}
+          placeholder={i18next.t("Select role")}
+          vocabularyName={vocabularyName}
+        />
+        <Form.Dropdown
+          className="three wide"
+          clearable={false}
+          disabled={isSubmitting}
+          error={typeError}
+          fluid
+          name={typeFieldPath}
+          noResultsMessage={i18next.t("No results found.")}
+          onBlur={fieldProps.onBlur}
+          onChange={(e, { value }) => fieldHelpers.setValue(value)}
+          options={options}
+          placeholder={i18next.t("Select type")}
+          search
+          searchInput={{ id: fieldPath }}
+          selection
+          value={fieldMeta.value || null}
+        />
+        <div className="field twelve wide">{NameFields}</div>
+        <CloseButton closeAction={closeAction} />
+      </GroupField>
+      {debug && <DebugInfo fieldPath={fieldPath} />}
+    </Form.Field>
+  );
+};
+
+export const OldContributorField = ({
+  closeAction,
+  debug,
+  fieldPath,
+  vocabularyName,
+}) => {
   return (
     <Form.Field>
       <GroupField fieldPath={fieldPath}>
@@ -359,13 +468,54 @@ export const ContributorField = ({ closeAction, debug, fieldPath, vocabularyName
           placeholder={i18next.t("Select role")}
           vocabularyName={vocabularyName}
         />
-        <LeftLabeledTextField
-          className="twelve wide"
-          debug={debug}
-          fieldPath={`${fieldPath}.name`}
-          label={i18next.t("Name")}
-          placeholder={i18next.t("Enter name here")}
-        />
+        <div className="field twelve wide">
+          <Grid>
+            <Grid.Row stretched style={{ "padding-bottom": 0 }}>
+              <Grid.Column stretched>
+                <LeftLabeledTextField
+                  //className="field sixteen wide"
+                  debug={debug}
+                  fieldPath={`${fieldPath}.fullName`}
+                  label={
+                    <>
+                      <Icon />
+                      {i18next.t("Full Name of Person/Organization")}
+                      <Popup
+                        trigger={<Icon className="ml-10 mr-0" name="info circle" />}
+                        content={i18next.t(
+                          "Providing given/family name allows us to generate better citations for your work" +
+                            " (e.g. `Smith, J.` instead of `John Smith`)." +
+                            " For organization names, given/family name aren't applicable;" +
+                            " In that case, just leave them blank."
+                        )}
+                      />
+                    </>
+                  }
+                  placeholder={i18next.t("Enter full name of person/organization here")}
+                  required
+                />
+              </Grid.Column>
+            </Grid.Row>
+            <Grid.Row stretched style={{ "padding-top": 0 }}>
+              <Grid.Column stretched style={{ "padding-right": 0 }} width={8}>
+                <LeftLabeledTextField
+                  debug={debug}
+                  fieldPath={`${fieldPath}.givenNames`}
+                  label={i18next.t("Given Names")}
+                  placeholder={i18next.t("Optionally enter given names here")}
+                />
+              </Grid.Column>
+              <Grid.Column stretched style={{ "padding-left": 0 }} width={8}>
+                <LeftLabeledTextField
+                  debug={debug}
+                  fieldPath={`${fieldPath}.familyName`}
+                  label={i18next.t("Family Name")}
+                  placeholder={i18next.t("Optionally enter family name here")}
+                />
+              </Grid.Column>
+            </Grid.Row>
+          </Grid>
+        </div>
         <CloseButton closeAction={closeAction} />
       </GroupField>
       {debug && <DebugInfo fieldPath={fieldPath} />}

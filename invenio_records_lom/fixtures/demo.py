@@ -74,9 +74,15 @@ def create_fake_duration(fake: Faker) -> dict:
     }
 
 
-def create_fake_vcard(fake: Faker) -> str:
+def create_fake_entity(fake: Faker) -> str:
     """Return a placeholder-string for a vcard-object."""
-    return f"{fake.last_name()}, {fake.first_name()}"
+    first_name = fake.first_name()
+    last_name = fake.last_name()
+    return {
+        "full_name": f"{first_name} {last_name}",
+        "given_names": first_name,
+        "family_name": last_name,
+    }
 
 
 #
@@ -109,7 +115,7 @@ def create_fake_contribute(fake: Faker, roles: list) -> dict:
     """Create a fake "contribute"-element, compatible with LOMv1.0."""
     return {
         "role": vocabularify(fake, roles),
-        "entity": [create_fake_vcard(fake) for __ in range(2)],
+        "entity": [create_fake_entity(fake) for __ in range(2)],
         "date": create_fake_datetime(fake),
     }
 
@@ -344,7 +350,7 @@ def create_fake_relation(fake: Faker) -> dict:
 def create_fake_annotation(fake: Faker) -> dict:
     """Create a fake "annotation"-element, compatible with LOMv1.0."""
     return {
-        "entity": create_fake_vcard(fake),
+        "entity": create_fake_entity(fake),
         "date": create_fake_datetime(fake),
         "description": langstringify(fake, fake.paragraph()),
     }

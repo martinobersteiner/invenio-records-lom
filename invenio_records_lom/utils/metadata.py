@@ -60,8 +60,11 @@ class BaseLOMMetadata:
 
     def append_contribute(
         self,
-        name: str,
+        full_name: str,
         role: str,
+        # type: ?,  # TODO: name of this; this also happens for non-metadata (maybe course?) - double-check that
+        given_names: str = "",
+        family_name: str = "",
         path: str | None = None,
         description: str | None = None,  # noqa: ARG002
     ) -> None:
@@ -72,7 +75,13 @@ class BaseLOMMetadata:
         """
         contribute = {
             "role": vocabularify(role.title()),
-            "entity": [name],
+            "entity": [
+                {
+                    "full_name": full_name,
+                    "given_names": given_names,
+                    "family_name": family_name,
+                },
+            ],
         }
         self.deduped_append(path, contribute)
 
@@ -372,7 +381,7 @@ class LOMMetadata(BaseLOMMetadata):  # pylint: disable=too-many-public-methods
         """Append metametadata contribute."""
         contribute = {
             "role": vocabularify(role),
-            "entity": [name],
+            "entity": [{"full_name": name}],
             "url": url,
             "logo": logo,
         }
